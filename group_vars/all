@@ -1,0 +1,18 @@
+---
+auth_token: "B0M^PlNLFZAc.Vne4NmnWUP0gA97ZIb0rV9cFSGE4seSQ5GKtOawXFvcGzjk5jS9mOV6DtGY5M"
+ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
+
+ssh_public_key: keys.pub
+plan: 'VR4x2x50'
+operating_system: "Ubuntu 22.04 (20221110)"
+bgp_group: 3166
+package_billing: usage
+contract_id: 325
+bgp_networks:
+    IPv4:
+     - { net: "192.175.48.0/24", ips: [ "192.175.48.1","192.175.48.6", "192.175.48.42" ], origin: "112" }
+     - { net: "192.31.196.0/24", ips: [ "192.31.196.1" ], origin: "112" }
+    IPv6:
+    - { net: "2620:4f:8000::/48", ips: [ "2620:4f:8000::1", "2620:4f:8000::6", "2620:4f:8000::42" ], origin: "112" }
+    - { net: "2001:4:112::/48", ips: [ "2001:4:112::1" ], origin: "112" }
+

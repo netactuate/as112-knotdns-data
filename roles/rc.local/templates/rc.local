@@ -1,0 +1,43 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# Managed by ansible
+
+if [ ! -f "/etc/ssh/ssh_host_dsa_key" ]
+then
+ssh-keygen -t dsa -N "" -f /etc/ssh/ssh_host_dsa_key
+fi
+
+if [ ! -f "/etc/ssh/ssh_host_rsa_key" ]
+then
+ssh-keygen -t rsa -N "" -f /etc/ssh/ssh_host_rsa_key
+fi
+
+{% if bgp_networks is defined %}
+{%     if 'IPv4' in bgp_networks and bgp_networks['IPv4']|length %}
+{%       for networkv4 in bgp_networks['IPv4'] if "/32" not in networkv4.net %}
+ip -4 route add blackhole {{ networkv4.net }}&
+{%       endfor %}
+{%       for networkv4 in bgp_networks['IPv4'] %}
+{%         for ipaddr in networkv4.ips %}
+ip -4 addr add local {{ ipaddr }}/32 dev lo&
+{%         endfor %}
+{%       endfor %}
+{%     endif %}
+{%     if 'IPv6' in bgp_networks and bgp_networks['IPv6']|length %}
+{%       for networkv6 in bgp_networks['IPv6'] if "/128" not in networkv6.net %}
+ip -6 route add blackhole {{ networkv6.net }}&
+{%       endfor %}
+{%       for networkv6 in bgp_networks['IPv6'] %}
+{%         for ipaddr in networkv6.ips %}
+ip -6 addr add local {{ ipaddr }}/128 dev lo preferred_lft 0&
+{%         endfor %}
+{%       endfor %}
+{%     endif %}
+{% endif -%}
+
+echo 1 > /proc/sys/net/ipv4/ip_forward
+ping -c 1 8.8.8.8
+
+exit 0

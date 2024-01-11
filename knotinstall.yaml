@@ -1,0 +1,167 @@
+---
+- name: Install KNOT DNS Auth, Telegraf, and configure Telegraf for knot
+  hosts: all
+  become: yes
+  vars:
+    telegraf_version: "latest"  # Replace with the desired version or leave it as 'latest'
+    local_folder_path: "./templates"  # Replace with the path to your db files on the Ansible control node
+  tasks:
+    - name: Install software-properties-common
+      ansible.builtin.apt:
+        name: software-properties-common
+        state: present
+    
+    - name: Install KNOT DNS
+      ansible.builtin.apt:
+        name: knot
+        state: latest
+
+    - name: Install KNOT DNSTAP
+      ansible.builtin.apt:
+        name: knot-module-dnstap
+        state: latest
+
+    - name: Install Telegraf
+      ansible.builtin.apt:
+        name: telegraf
+        state: latest
+
+    - name: Give Telegraf permission to run knotc without a password
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        line: 'telegraf ALL=(ALL) NOPASSWD:/usr/sbin/knotc -f stats'
+        validate: 'visudo -cf %s'
+
+    - name: Clone telegraf-knot repository from GitHub
+      ansible.builtin.git:
+        repo: https://github.com/x70b1/telegraf-knot.git
+        dest: /opt/telegraf
+        clone: yes
+        update: yes
+        force: yes
+
+    - name: Ensure the telegraf executable script is in place
+      ansible.builtin.copy:
+        dest: /opt/telegraf/telegraf-knot.sh
+        content: |
+          #!/bin/sh
+          sudo /usr/sbin/knotc -f stats "$@"
+        mode: 0755
+
+    - name: Configure Telegraf exec input plugin for knot
+      ansible.builtin.blockinfile:
+        path: /etc/telegraf/telegraf.conf
+        block: |
+          [[inputs.exec]]
+            command = "sh /opt/telegraf/telegraf-knot.sh -s /run/knot/knot.sock"
+            data_format = "influx"
+            interval = "10s"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK for knot"
+
+    - name: Restart telegraf service
+      ansible.builtin.service:
+        name: telegraf
+        state: restarted
+
+    - name: Install knot.conf into /etc/knot/knot.conf
+      ansible.builtin.copy:
+        src: "{{ local_folder_path }}/knot.conf"  
+        dest: /etc/knot/knot.conf
+        owner: knot  
+        group: knot  
+        mode: '0640'
+
+    - name: Ensure /var/log/knot-query directory exists
+      ansible.builtin.file:
+        path: /var/log/knot-query
+        state: directory
+        owner: knot
+        group: knot
+        mode: '0755'
+
+    - name: Ensure /var/log/knot-query/knot-query.log exists
+      ansible.builtin.file:
+        path: /var/log/knot-query/knot-query.log
+        state: touch
+        owner: knot
+        group: knot
+        mode: '0644'
+
+    - name: Set permissions on /var/log/knot-query/knot-query.log
+      ansible.builtin.file:
+        path: /var/log/knot-query/knot-query.log
+        owner: knot
+        group: knot
+        mode: '0644'
+
+    - name: copy db.dd-empty file to /var/lib/knot
+      ansible.builtin.copy:
+        src: "{{ local_folder_path }}/db.dd-empty"
+        dest: /var/lib/knot/db.dd-empty
+        owner: knot
+        group: knot
+        mode: '0644'
+
+    - name: copy db.dr-empty file to /var/lib/knot
+      ansible.builtin.copy:
+        src: "{{ local_folder_path }}/db.dr-empty"
+        dest: /var/lib/knot/db.dr-empty
+        owner: knot
+        group: knot
+        mode: '0644'
+
+    - name: Template db.hostname.as112.arpa file to /var/lib/knot
+      ansible.builtin.template:
+        src: "{{ local_folder_path }}/db.hostname.as112.arpa.j2"
+        dest: /var/lib/knot/db.hostname.as112.arpa
+        owner: knot
+        group: knot
+        mode: '0644'
+
+    - name: Template db.hostname.as112.net file to /var/lib/knot
+      ansible.builtin.template:
+        src: "{{ local_folder_path }}/db.hostname.as112.net.j2"
+        dest: /var/lib/knot/db.hostname.as112.net
+        owner: knot
+        group: knot
+        mode: '0644'
+
+    - name: copy db.dd-empty file to /etc/knot
+      ansible.builtin.copy:
+        src: "{{ local_folder_path }}/db.dd-empty"
+        dest: /etc/knot/db.dd-empty
+        owner: knot
+        group: knot
+        mode: '0644'
+
+    - name: copy db.dr-empty file to /var/lib/knot
+      ansible.builtin.copy:
+        src: "{{ local_folder_path }}/db.dr-empty"
+        dest: /etc/knot/db.dr-empty
+        owner: knot
+        group: knot
+        mode: '0644'
+
+    - name: Template db.hostname.as112.arpa file to /var/lib/knot
+      ansible.builtin.template:
+        src: "{{ local_folder_path }}/db.hostname.as112.arpa.j2"
+        dest: /etc/knot/db.hostname.as112.arpa
+        owner: knot
+        group: knot
+        mode: '0644'
+
+    - name: Template db.hostname.as112.net file to /var/lib/knot
+      ansible.builtin.template:
+        src: "{{ local_folder_path }}/db.hostname.as112.net.j2"
+        dest: /etc/knot/db.hostname.as112.net
+        owner: knot
+        group: knot
+        mode: '0644'
+      notify: restart knot
+
+
+  handlers:
+    - name: restart knot
+      ansible.builtin.service:
+        name: knot
+        state: restarted

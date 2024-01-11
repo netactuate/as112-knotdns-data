@@ -1,0 +1,13 @@
+$TTL    1W
+@       SOA     {{ ansible_fqdn }}. noc.netactuate.com. (
+                           1               ; serial number
+                           1W              ; refresh
+                           1M              ; retry
+                           1W              ; expire
+                           1W )            ; negative caching TTL
+           NS      blackhole.as112.arpa.
+           TXT     "AS112 hosted by NetActuate"
+           TXT     "See https://www.as112.net/ for more information."
+           TXT     "See https://netactuate.com/ for local information."
+           TXT     "Unique IP: {{ ansible_default_ipv4.address }}"
+           TXT     "Unique IP: {{ ansible_default_ipv6.address }}"

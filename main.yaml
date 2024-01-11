@@ -1,0 +1,7 @@
+---
+- import_playbook: createnode.yaml
+
+- import_playbook: bgp.yaml
+
+- import_playbook: knotinstall.yaml
+

@@ -1,0 +1,19 @@
+- name: Delete the nodes
+  hosts: nodes
+  gather_facts: no
+
+  tasks:
+  - name: Delete compute node
+    netactuate.compute.node:
+      auth_token: "{{ auth_token }}"
+      hostname: "{{ inventory_hostname }}"
+      ssh_public_key: "{{ ssh_public_key }}"
+      operating_system: "{{ operating_system }}"
+      location: "{{ location }}"
+      plan: "{{ plan }}"
+      mbpkgid: "{{ mbpkgid|default(omit) }}"
+      state: terminated
+      unique: true
+      package_billing: package
+    delegate_to: localhost
+    register: na

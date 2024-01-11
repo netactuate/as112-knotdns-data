@@ -1,0 +1,3 @@
+conffiles:
+    - { name: bird.conf, owner: bird, group: bird, mode: 640 }
+    - { name: bird6.conf, owner: bird, group: bird, mode: 640 }

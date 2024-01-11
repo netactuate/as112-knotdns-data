@@ -1,0 +1,8 @@
+---
+  - name: reload bird
+    service: name=bird state=reloaded
+    ignore_errors: yes
+
+  - name: reload bird6
+    service: name=bird6 state=reloaded
+    ignore_errors: yes
