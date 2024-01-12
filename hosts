@@ -2,8 +2,8 @@
 localhost ansible_connection=local ansible_python_interpreter=python3
 
 [nodes]
-as112.dfw.netactuate.test location=dfw bgp_enabled=True
-as112.den.netactuate.test location=den bgp_enabled=True
-as112-phx.netactuate.test location=phx bgp_enabled=True
-as112-mci.netactuate.test location=mci bgp_enabled=True
+as112-dfw.netactuate.com location=dfw bgp_enabled=True
+as112-den.netactuate.com location=den bgp_enabled=True
+as112-phx.netactuate.com location=phx bgp_enabled=True
+as112-mci.netactuate.com location=mci bgp_enabled=True
 

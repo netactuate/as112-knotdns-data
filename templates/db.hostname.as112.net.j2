@@ -9,5 +9,5 @@ $TTL    1W
             NS      blackhole-2.iana.org.
             TXT     "AS112 hosted by NetActuate"
             TXT     "See https://www.as112.net/ for more information."
-            TXT     "Unique IP: {{ ansible_default_ipv4.address }}"
-            TXT     "Unique IP: {{ ansible_default_ipv6.address }}"
+            TXT     "Server IP: {{ ansible_default_ipv4.address }}"
+            TXT     "Server IP: {{ ansible_default_ipv6.address }}"
