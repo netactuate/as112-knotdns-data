@@ -2,8 +2,38 @@
 localhost ansible_connection=local ansible_python_interpreter=python3
 
 [nodes]
-as112-dfw.netactuate.com location=dfw bgp_enabled=True
-as112-den.netactuate.com location=den bgp_enabled=True
-as112-phx.netactuate.com location=phx bgp_enabled=True
-as112-mci.netactuate.com location=mci bgp_enabled=True
+as112-dfw.netactuate.com location=dfw bgp_enabled=true
+as112-den.netactuate.com location=den bgp_enabled=true
+as112-phx.netactuate.com location=phx bgp_enabled=true
+as112-mci.netactuate.com location=mci bgp_enabled=true
+as112-sjc.netactuate.com location=sjc bgp_enabled=true
+as112-lax.netactuate.com location=lax bgp_enabled=true
+as112-chi.netactuate.com location=chi bgp_enabled=true
+as112-lga.netactuate.com location=lga bgp_enabled=true
+as112-maa.netactuate.com location=maa bgp_enabled=true
+as112-lhr.netactuate.com location=lhr bgp_enabled=true
+as112-ams.netactuate.com location=ams bgp_enabled=true
+as112-cdg.netactuate.com location=cdg bgp_enabled=true
+as112-hkg.netactuate.com location=hkg bgp_enabled=true
+as112-mia.netactuate.com location=mia bgp_enabled=true
+as112-sea.netactuate.com location=sea bgp_enabled=true
+as112-tor.netactuate.com location=tor bgp_enabled=true
+as112-syd.netactuate.com location=syd bgp_enabled=true
+as112-otp.netactuate.com location=otp bgp_enabled=true
+as112-fra.netactuate.com location=fra bgp_enabled=true
+as112-sin.netactuate.com location=sin bgp_enabled=true
+as112-gru.netactuate.com location=gru bgp_enabled=true
+as112-rdu.netactuate.com location=rdu bgp_enabled=true
+as112-iad.netactuate.com location=iad3 bgp_enabled=true
+as112-tyo.netactuate.com location=tyo bgp_enabled=true
+as112-jnb.netactuate.com location=jnb bgp_enabled=true
+as112-dxb.netactuate.com location=dxb bgp_enabled=true
+as112-scl.netactuate.com location=scl bgp_enabled=true
+as112-mad.netactuate.com location=mad bgp_enabled=true
+as112-waw.netactuate.com location=waw bgp_enabled=true
+as112-man.netactuate.com location=man bgp_enabled=true
+as112-yul.netactuate.com location=yul bgp_enabled=true
+as112-nbo.netactuate.com location=nbo bgp_enabled=true
+as112-bom.netactuate.com location=bom bgp_enabled=true
+as112-acc.netactuate.com location=acc bgp_enabled=true
 

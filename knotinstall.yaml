@@ -29,8 +29,15 @@
     - name: Give Telegraf permission to run knotc without a password
       ansible.builtin.lineinfile:
         path: /etc/sudoers
-        line: 'telegraf ALL=(ALL) NOPASSWD:/usr/sbin/knotc -f stats'
+        line: '_telegraf ALL=(ALL) NOPASSWD:/usr/sbin/knotc -f stats'
         validate: 'visudo -cf %s'
+
+    - name: Add _telegraf user to knot group
+      ansible.builtin.user:
+        name: _telegraf
+        groups: knot
+        append: yes
+
 
     - name: Clone telegraf-knot repository from GitHub
       ansible.builtin.git:
@@ -45,7 +52,7 @@
         dest: /opt/telegraf/telegraf-knot.sh
         content: |
           #!/bin/sh
-          sudo /usr/sbin/knotc -f stats "$@"
+          /usr/sbin/knotc -s /run/knot/knot.sock -f stats
         mode: 0755
 
     - name: Configure Telegraf exec input plugin for knot
@@ -53,7 +60,7 @@
         path: /etc/telegraf/telegraf.conf
         block: |
           [[inputs.exec]]
-            command = "sh /opt/telegraf/telegraf-knot.sh -s /run/knot/knot.sock"
+            command = "sh /opt/telegraf/telegraf-knot.sh"
             data_format = "influx"
             interval = "10s"
         marker: "# {mark} ANSIBLE MANAGED BLOCK for knot"
@@ -85,14 +92,14 @@
         state: touch
         owner: knot
         group: knot
-        mode: '0644'
+        mode: '0755'
 
     - name: Set permissions on /var/log/knot-query/knot-query.log
       ansible.builtin.file:
         path: /var/log/knot-query/knot-query.log
         owner: knot
         group: knot
-        mode: '0644'
+        mode: '0755'
 
     - name: copy db.dd-empty file to /var/lib/knot
       ansible.builtin.copy:

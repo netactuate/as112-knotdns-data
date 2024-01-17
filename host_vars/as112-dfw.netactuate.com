@@ -1,5 +1,5 @@
 ---
-# file: host_vars/as112.dfw.netactuate.test
+# file: host_vars/as112-dfw.netactuate.com
 ansible_ssh_host: 209.177.156.207
 nodesetup:
     bgp_peers:
@@ -12,7 +12,7 @@ nodesetup:
         localpeerv4: 209.177.156.207
         localpeerv6: 2607:f740:100::cc8
         peerasn: '36236'
-    hostname: as112.dfw.netactuate.test
+    hostname: as112-dfw.netactuate.com
     id: 567007
     public_ipv4: 209.177.156.207
     public_ipv6: 2607:f740:100::cc8
