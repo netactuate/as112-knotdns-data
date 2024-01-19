@@ -3,7 +3,8 @@ auth_token: "B0M^PlNLFZAc.Vne4NmnWUP0gA97ZIb0rV9cFSGE4seSQ5GKtOawXFvcGzjk5jS9mOV
 ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
 
 ssh_public_key: keys.pub
-plan: 'VR4x2x50'
+#plan: 'VR4x2x50'
+plan: 'VR4x2x100'
 operating_system: "Ubuntu 22.04 (20221110)"
 bgp_group: 3166
 package_billing: usage
