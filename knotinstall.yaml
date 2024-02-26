@@ -6,11 +6,12 @@
     telegraf_version: "latest"  # Replace with the desired version or leave it as 'latest'
     local_folder_path: "./templates"  # Replace with the path to your db files on the Ansible control node
   tasks:
-      - name: Add KNOT DNS repository
-        ansible.builtin.apt_repository:
-          repo: 'ppa:cz.nic-labs/knot-dns-latest'
-          state: present
-          update_cache: yes
+    - name: Add KNOT DNS repository
+      ansible.builtin.apt_repository:
+        repo: 'ppa:cz.nic-labs/knot-dns-latest'
+        state: present
+        update_cache: yes
+
     - name: Install software-properties-common
       ansible.builtin.apt:
         name: software-properties-common
