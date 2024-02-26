@@ -36,4 +36,4 @@ as112-yul.netactuate.com location=yul bgp_enabled=true
 as112-nbo.netactuate.com location=nbo bgp_enabled=true
 as112-bom.netactuate.com location=bom bgp_enabled=true
 as112-acc.netactuate.com location=acc bgp_enabled=true
-influx.grafana.as112 location=iad3
+#influx.grafana.as112 location=iad3
