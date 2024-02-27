@@ -1,10 +1,12 @@
 ---
 - name: Install KNOT DNS Auth, Telegraf, and configure Telegraf for knot
-  hosts: all
+  hosts: nodes
   become: yes
   vars:
     telegraf_version: "latest"  # Replace with the desired version or leave it as 'latest'
     local_folder_path: "./templates"  # Replace with the path to your db files on the Ansible control node
+    influx_url: "http://104.225.11.250:8086" # Replace with your InfluxDB2 URL
+    influx_token: "OC2tSKltqRtQxAk37X1IyYIqaQImo1Vs0bi0SoTKaQeE-tR85PdAxIp8LEkc-c34mu9SXljWQx4vT5zQJb2QXA==" # Replace with your telegraf data source token from Influx
   tasks:
     - name: Add KNOT DNS repository
       ansible.builtin.apt_repository:
@@ -91,8 +93,8 @@
             timeout = "25s"
 
           [[outputs.influxdb_v2]]
-            urls = ["http://104.225.11.250:8086"]
-            token = "OC2tSKltqRtQxAk37X1IyYIqaQImo1Vs0bi0SoTKaQeE-tR85PdAxIp8LEkc-c34mu9SXljWQx4vT5zQJb2QXA=="
+            urls = ["{{ influx_url }}"]
+            token = "{{ influx_token }}"
             organization = "AS112"
             bucket = "AS112"
 
