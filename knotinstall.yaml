@@ -7,6 +7,8 @@
     local_folder_path: "./templates"  # Replace with the path to your db files on the Ansible control node
     influx_url: "http://influx_url:port" # Replace with your InfluxDB2 URL
     influx_token: "<INFLUX TELEGRAF TOKEN>" # Replace with your telegraf data source token from Influx
+    influx_org: "AS112"
+    influx_bucket: "AS112"
   tasks:
     - name: Add KNOT DNS repository
       ansible.builtin.apt_repository:
@@ -95,8 +97,8 @@
           [[outputs.influxdb_v2]]
             urls = ["{{ influx_url }}"]
             token = "{{ influx_token }}"
-            organization = "AS112"
-            bucket = "AS112"
+            organization = "{{ influx_org }}"
+            bucket = "{{ influx_bucket }}"
 
         marker: "# {mark} ANSIBLE MANAGED BLOCK for knot"
 
