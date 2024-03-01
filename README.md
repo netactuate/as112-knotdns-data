@@ -12,6 +12,7 @@ The following playbooks and configurations are a standard automated install of t
 For Netactuate node creation playbooks:
  - pip install naapi>=0.1.7 ansible>=2.8.0
  - ansible-galaxy collection install netactuate.compute
+
 InfluxDB2/Grafana environment established
 
 ## Important Files:
