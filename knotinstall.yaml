@@ -5,8 +5,8 @@
   vars:
     telegraf_version: "latest"  # Replace with the desired version or leave it as 'latest'
     local_folder_path: "./templates"  # Replace with the path to your db files on the Ansible control node
-    influx_url: "http://104.225.11.250:8086" # Replace with your InfluxDB2 URL
-    influx_token: "OC2tSKltqRtQxAk37X1IyYIqaQImo1Vs0bi0SoTKaQeE-tR85PdAxIp8LEkc-c34mu9SXljWQx4vT5zQJb2QXA==" # Replace with your telegraf data source token from Influx
+    influx_url: "http://influx_url:port" # Replace with your InfluxDB2 URL
+    influx_token: "<INFLUX TELEGRAF TOKEN>" # Replace with your telegraf data source token from Influx
   tasks:
     - name: Add KNOT DNS repository
       ansible.builtin.apt_repository:
@@ -106,12 +106,13 @@
         state: restarted
 
     - name: Install knot.conf into /etc/knot/knot.conf
-      ansible.builtin.copy:
+      ansible.builtin.template:
         src: "{{ local_folder_path }}/knot.conf"  
         dest: /etc/knot/knot.conf
         owner: knot  
         group: knot  
         mode: '0640'
+      tags: knot-conf
 
     - name: Ensure /var/log/knot-query directory exists
       ansible.builtin.file:
@@ -120,6 +121,8 @@
         owner: knot
         group: knot
         mode: '0755'
+      tags: knot-conf
+
 
     - name: Ensure /var/log/knot-query/knot-query.log exists
       ansible.builtin.file:
@@ -128,6 +131,8 @@
         owner: knot
         group: knot
         mode: '0755'
+      tags: knot-conf
+
 
     - name: Set permissions on /var/log/knot-query/knot-query.log
       ansible.builtin.file:
@@ -135,6 +140,8 @@
         owner: knot
         group: knot
         mode: '0755'
+      tags: knot-conf
+
 
     - name: copy db.dd-empty file to /var/lib/knot
       ansible.builtin.copy:
@@ -143,6 +150,8 @@
         owner: knot
         group: knot
         mode: '0644'
+      tags: zones
+
 
     - name: copy db.dr-empty file to /var/lib/knot
       ansible.builtin.copy:
@@ -151,6 +160,8 @@
         owner: knot
         group: knot
         mode: '0644'
+      tags: zones
+
 
     - name: Template db.hostname.as112.arpa file to /var/lib/knot
       ansible.builtin.template:
@@ -159,6 +170,8 @@
         owner: knot
         group: knot
         mode: '0644'
+      tags: zones
+
 
     - name: Template db.hostname.as112.net file to /var/lib/knot
       ansible.builtin.template:
@@ -167,6 +180,8 @@
         owner: knot
         group: knot
         mode: '0644'
+      tags: zones
+
 
     - name: copy db.dd-empty file to /etc/knot
       ansible.builtin.copy:
@@ -175,6 +190,8 @@
         owner: knot
         group: knot
         mode: '0644'
+      tags: zones
+
 
     - name: copy db.dr-empty file to /var/lib/knot
       ansible.builtin.copy:
@@ -183,6 +200,8 @@
         owner: knot
         group: knot
         mode: '0644'
+      tags: zones
+
 
     - name: Template db.hostname.as112.arpa file to /var/lib/knot
       ansible.builtin.template:
@@ -191,6 +210,8 @@
         owner: knot
         group: knot
         mode: '0644'
+      tags: zones
+
 
     - name: Template db.hostname.as112.net file to /var/lib/knot
       ansible.builtin.template:
@@ -199,6 +220,8 @@
         owner: knot
         group: knot
         mode: '0644'
+      tags: zones
+
       notify: restart knot
 
 
