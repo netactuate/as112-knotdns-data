@@ -40,7 +40,7 @@ KnotDNS/Telegraf Install:
 
 
 ## Grafana Dashboards:
-- KnotDNS Global Stats:
-- KnotDNS Regional QPS:
-- Knot/Server Resource Top5:
-- Server hardware monitor: 
+- KnotDNS Global Stats: grafana_dashboards/knotdns_overview.json
+- KnotDNS Regional QPS: grafana_dashboards/knotdns_region.json
+- Knot/Server Resource Top5: grafana_dashboards/knotdns_top5.json
+- Server hardware monitor:  grafana_dashboards/server_hardware.json

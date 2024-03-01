@@ -1,0 +1,845 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 2,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 12,
+        "title": "Data / Avg Load",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-BlYlRd"
+            },
+            "displayName": "${__field.labels.type}",
+            "fieldMinMax": false,
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "decbytes"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 14,
+          "x": 0,
+          "y": 1
+        },
+        "id": 7,
+        "options": {
+          "displayMode": "lcd",
+          "maxVizHeight": 46,
+          "minVizHeight": 67,
+          "minVizWidth": 25,
+          "namePlacement": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "showUnfilled": true,
+          "sizing": "manual",
+          "text": {
+            "titleSize": 24,
+            "valueSize": 35
+          },
+          "valueMode": "color"
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+            },
+            "query": "import \"strings\"\n\nfrom(bucket: \"AS112\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"stats\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^${hostname:regex}$/)\n  |> filter(fn: (r) => r.bytes != \"\" and r.bytes != \"other\" and r.bytes != \"transfer\")\n  |> map(fn: (r) => ({ r with bytes: strings.toUpper(v: r.bytes) }))\n  |> group(columns: [\"host\", \"bytes\"])\n  |> spread()\n  |> group(columns: [\"bytes\"])\n  |> sum()\n  |> group()\n  |> top(n: 4)\n  \n",
+            "refId": "A"
+          }
+        ],
+        "title": "Data Usage by Function",
+        "transparent": true,
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 2,
+            "displayName": "System Usage",
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "super-light-blue",
+                  "value": null
+                },
+                {
+                  "color": "dark-red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 7,
+          "x": 17,
+          "y": 1
+        },
+        "id": 8,
+        "options": {
+          "minVizHeight": 200,
+          "minVizWidth": 200,
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true,
+          "sizing": "auto"
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+            },
+            "query": "from(bucket: \"AS112\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_system\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^${hostname:regex}$/)\n  |> aggregateWindow(every: 5m, fn: max, createEmpty: false)\n  |> group(columns: [\"cpu\"])\n  |> mean()\n  |> group()\n  |> mean()",
+            "refId": "A"
+          }
+        ],
+        "title": "Average System Usage",
+        "transparent": true,
+        "type": "gauge"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 9
+        },
+        "id": 11,
+        "panels": [],
+        "title": "Stats Counters",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 10
+        },
+        "id": 2,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "max"
+            ],
+            "fields": "/^_value$/",
+            "values": true
+          },
+          "text": {
+            "titleSize": 24,
+            "valueSize": 30
+          },
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+            },
+            "query": "import \"strings\"\n\nfrom(bucket: \"AS112\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"stats\")\n  |> filter(fn: (r) => r[\"_field\"] == \"server-operation\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^${hostname:regex}$/)\n  |> spread()\n  |> group(columns: [\"operation\"])\n  |> sum()\n  |> group()\n  |> map(fn: (r) => ({\n      r with\n      operation: strings.toUpper(v: r.operation)\n    }))\n  |> top(n: 6, columns: [\"_value\"])\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Total Received Requests by Request Type",
+        "transparent": true,
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "displayName": "${__field.labels.type}",
+            "fieldMinMax": false,
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 18
+        },
+        "id": 3,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "text": {
+            "titleSize": 24,
+            "valueSize": 30
+          },
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+            },
+            "query": "from(bucket: \"AS112\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"stats\")\n  |> filter(fn: (r) => r[\"_field\"] == \"query-type\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^${hostname:regex}$/)\n  |> filter(fn: (r) => \n        r[\"type\"] == \"A\" or \n        r[\"type\"] == \"AAAA\" or \n        r[\"type\"] == \"ANY\" or \n        r[\"type\"] == \"CNAME\" or \n        r[\"type\"] == \"HTTPS\" or \n        r[\"type\"] == \"MX\" or \n        r[\"type\"] == \"NS\" or \n        r[\"type\"] == \"PTR\" or \n        r[\"type\"] == \"SOA\" or \n        r[\"type\"] == \"SPF\" or \n        r[\"type\"] == \"TXT\"\n    )\n  |> spread()\n  |> group(columns: [\"type\"])\n  |> sum()\n  |> group()\n  |> top(n: 6, columns: [\"_value\"])",
+            "refId": "A"
+          }
+        ],
+        "title": "Total Received Requests by Query Type",
+        "transparent": true,
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "displayName": "${__field.labels.type}",
+            "fieldMinMax": false,
+            "mappings": [],
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "short"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 24,
+          "x": 0,
+          "y": 26
+        },
+        "id": 9,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "text": {
+            "titleSize": 24,
+            "valueSize": 30
+          },
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+            },
+            "query": "import \"strings\"\nfrom(bucket: \"AS112\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"stats\")\n  |> filter(fn: (r) => r[\"_field\"] == \"request-protocol\")\n  |> filter(fn: (r) => r[\"host\"] =~ /^${hostname:regex}$/)\n  |> filter(fn: (r) => r[\"protocol\"] =~ /^.*[4,6]$/)\n  |> spread()\n  |> group(columns: [\"protocol\"])\n  |> sum()\n  |> group()\n  |> map(fn: (r) => ({\n    r with\n    protocol: strings.toUpper(v: r.protocol)\n  }))\n  |> top(n: 6, columns: [\"_value\"])",
+            "refId": "A"
+          }
+        ],
+        "title": "Total Received Requests by Protocol",
+        "transparent": true,
+        "type": "stat"
+      },
+      {
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 34
+        },
+        "id": 10,
+        "title": "Graphs",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 100,
+              "gradientMode": "opacity",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 1,
+              "pointSize": 3,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "displayName": "${__field.labels.host}",
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 0,
+          "y": 35
+        },
+        "id": 5,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+            },
+            "query": "from(bucket: \"AS112\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_field\"] == \"request-protocol\")\n  |> filter(fn: (r) => r[\"protocol\"] == \"udp4\")\n  |> filter(fn: (r) => r[\"_measurement\"] == \"stats\")\n  |> filter(fn: (r) => r[\"host\"]=~ /^${hostname:regex}$/)\n  // Aggregate using last to get the value difference within each 1-minute window for all hosts\n  |> aggregateWindow(every: 1m, fn: spread, createEmpty: false)\n\n",
+            "refId": "A"
+          }
+        ],
+        "title": "UDP4 Queries per Minute",
+        "transformations": [],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 100,
+              "gradientMode": "opacity",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 1,
+              "pointSize": 2,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "displayName": "${__field.labels.host}",
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 12,
+          "y": 35
+        },
+        "id": 6,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+            },
+            "query": "from(bucket: \"AS112\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_field\"] == \"request-protocol\")\n  |> filter(fn: (r) => r[\"protocol\"] == \"udp6\")\n  |> filter(fn: (r) => r[\"_measurement\"] == \"stats\")\n  |> filter(fn: (r) => r[\"host\"]=~ /^${hostname:regex}$/)\n  // Aggregate using last to get the final value within each 1-minute window for all hosts\n  |> aggregateWindow(every: 1m, fn: spread, createEmpty: false)",
+            "refId": "A"
+          }
+        ],
+        "title": "UDP6 Queries per Minute",
+        "transformations": [],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 100,
+              "gradientMode": "opacity",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 1,
+              "pointSize": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "displayName": "${__field.labels.host}",
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 0,
+          "y": 45
+        },
+        "id": 1,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+            },
+            "query": "from(bucket: \"AS112\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_field\"] == \"request-protocol\")\n  |> filter(fn: (r) => r[\"protocol\"] == \"tcp4\")\n  |> filter(fn: (r) => r[\"_measurement\"] == \"stats\")\n  |> filter(fn: (r) => r[\"host\"]=~ /^${hostname:regex}$/)\n  // Aggregate using last to get the final value within each 1-minute window for all hosts\n  |> aggregateWindow(every: 1m, fn: spread, createEmpty: false)",
+            "refId": "A"
+          }
+        ],
+        "title": "TCP4 Queries per Minute",
+        "transformations": [],
+        "type": "timeseries"
+      },
+      {
+        "datasource": {
+          "type": "influxdb",
+          "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "axisSoftMax": 10,
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 100,
+              "gradientMode": "opacity",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "insertNulls": false,
+              "lineInterpolation": "smooth",
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 1,
+              "pointSize": 2,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "auto",
+              "spanNulls": false,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "displayName": "${__field.labels.host}",
+            "fieldMinMax": false,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 12,
+          "y": 45
+        },
+        "id": 4,
+        "options": {
+          "legend": {
+            "calcs": [],
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "10.2.3",
+        "targets": [
+          {
+            "datasource": {
+              "type": "influxdb",
+              "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+            },
+            "query": "from(bucket: \"AS112\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_field\"] == \"request-protocol\")\n  |> filter(fn: (r) => r[\"protocol\"] == \"tcp6\")\n  |> filter(fn: (r) => r[\"_measurement\"] == \"stats\")\n  |> filter(fn: (r) => r[\"host\"]=~ /^${hostname:regex}$/)\n  // Aggregate using last to get the final value within each 1-minute window for all hosts\n  |> aggregateWindow(every: 1m, fn: spread, createEmpty: false)",
+            "refId": "A"
+          }
+        ],
+        "title": "TCP6 Queries per Minute",
+        "transformations": [],
+        "type": "timeseries"
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 39,
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": false,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "influxdb",
+            "uid": "cb552023-7159-4bc4-85d4-468fc9bea1d1"
+          },
+          "definition": "import \"influxdata/influxdb/schema\"\n\nschema.measurementTagValues(\n   bucket: \"AS112\",\n   measurement: \"stats\",\n   tag: \"host\"\n)\n",
+          "description": "AS112 Node:",
+          "hide": 0,
+          "includeAll": true,
+          "label": "AS112 Node:",
+          "multi": true,
+          "name": "hostname",
+          "options": [],
+          "query": "import \"influxdata/influxdb/schema\"\n\nschema.measurementTagValues(\n   bucket: \"AS112\",\n   measurement: \"stats\",\n   tag: \"host\"\n)\n",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 1,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "utc",
+    "title": "AS112 KnotDNS Stats",
+    "uid": "ee074d8a-a750-4354-b6ba-6c4caa81d65b",
+    "version": 74,
+    "weekStart": ""
+  }
